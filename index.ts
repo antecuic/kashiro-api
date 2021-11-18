@@ -1,4 +1,4 @@
-import express from 'express';
+import express, { Request, Response } from 'express';
 import mongoose from 'mongoose';
 // import passport from 'passport';
 import session from 'express-session';
@@ -7,6 +7,7 @@ import cookieParser from 'cookie-parser';
 import dotenv from 'dotenv';
 import cors from 'cors';
 import userRouter from './routers/userRouter';
+import authRouter from './routers/authRouter';
 import balanceRouter from './routers/balanceRouter';
 
 dotenv.config();
@@ -31,23 +32,19 @@ app.use(
     saveUninitialized: true,
   })
 );
-// app.use(passport.initialize());
-// app.use(passport.session());
-
-// TODO: Check following code for missing properties or properties that aren't in use
-// Add route for handling 404's
 
 // Routes
+app.use('/auth', authRouter);
 app.use('/user', userRouter);
 app.use('/balance', balanceRouter);
 
-app.use((err, req, res) => {
-  res.status(err.status || 500);
+app.use((err, req: Request, res: Response) => {
+  res.sendStatus(500);
   res.json({ error: err });
 });
 
-app.use((req, res) => {
-  res.status(404).json({ message: 'Not found.' });
+app.use((req: Request, res: Response) => {
+  res.sendStatus(404).json({ message: 'Not found.' });
 });
 
 // Mongoose connect
