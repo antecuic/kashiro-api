@@ -1,4 +1,6 @@
 import { NextFunction, Response } from 'express';
+import jwt from 'jsonwebtoken';
+
 // Verify Token
 
 export default function verifyToken(req, res: Response, next: NextFunction) {
@@ -12,10 +14,15 @@ export default function verifyToken(req, res: Response, next: NextFunction) {
     const bearerToken = bearer[1];
     // Set the token
     req.token = bearerToken;
-    // Next middleware
-    next();
+    jwt.verify(req.token, process.env.SECRET_KEY, (err) => {
+      if (err) {
+        res.sendStatus(403);
+      } else {
+        // Next middleware
+        next();
+      }
+    });
   } else {
-    // Forbidden
     res.sendStatus(403);
   }
 }

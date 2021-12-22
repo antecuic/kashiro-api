@@ -1,4 +1,5 @@
 import express from 'express';
+import verifyToken from '../config/verifyToken';
 import {
   getUser,
   getCurrentBalance,
@@ -8,9 +9,9 @@ import {
 
 const router = express.Router();
 
-router.get('/', getUser);
-router.get('/current-balance', getCurrentBalance);
-router.get('/income-list', getIncomeList);
-router.get('/expense-list', getExpenseList);
+router.get('/', verifyToken, getUser);
+router.get('/current-balance', verifyToken, getCurrentBalance);
+router.get('/income-list', verifyToken, getIncomeList);
+router.get('/expense-list', verifyToken, getExpenseList);
 
 export default router;

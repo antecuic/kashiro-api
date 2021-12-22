@@ -1,4 +1,5 @@
 import express from 'express';
+import verifyToken from '../config/verifyToken';
 import {
   addItem,
   removeItem,
@@ -7,8 +8,8 @@ import {
 
 const router = express.Router();
 
-router.post('/add-item', addItem);
-router.post('/remove-item', removeItem);
-router.post('/update-item', updateItem);
+router.post('/add-item', verifyToken, addItem);
+router.post('/remove-item', verifyToken, removeItem);
+router.post('/update-item', verifyToken, updateItem);
 
 export default router;
