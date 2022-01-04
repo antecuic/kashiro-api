@@ -33,7 +33,8 @@ const getCurrentBalance = async (req, res) => {
 };
 
 const getIncomeList = async (req, res) => {
-  const userID: string = req.user._id;
+  console.log(req.body.id);
+  const userID: string = req.body.id;
 
   const incomes: IItem.ItemInformation[] = await getAllIncomes(userID);
   const total: number = calculateTotalAmount(incomes);
