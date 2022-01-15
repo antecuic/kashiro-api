@@ -12,7 +12,7 @@ const getUser = (req, res) => {
 };
 
 const getCurrentBalance = async (req, res) => {
-  const userID: string = req.user._id;
+  const { userID } = req.body;
 
   const incomes: IItem.ItemInformation[] = await getAllIncomes(userID);
   const expenses: IItem.ItemInformation[] = await getAllExpenses(userID);
@@ -33,8 +33,7 @@ const getCurrentBalance = async (req, res) => {
 };
 
 const getIncomeList = async (req, res) => {
-  console.log(req.body.id);
-  const userID: string = req.body.id;
+  const { userID } = req.body;
 
   const incomes: IItem.ItemInformation[] = await getAllIncomes(userID);
   const total: number = calculateTotalAmount(incomes);
@@ -48,7 +47,7 @@ const getIncomeList = async (req, res) => {
 };
 
 const getExpenseList = async (req, res) => {
-  const userID: string = req.user._id;
+  const { userID } = req.body;
 
   const expenses: IItem.ItemInformation[] = await getAllExpenses(userID);
   const total: number = calculateTotalAmount(expenses);

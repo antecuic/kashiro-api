@@ -63,6 +63,7 @@ const register = (req: Request, res: Response) => {
       surname,
       name,
       password,
+      balance: 0,
     });
 
     newUser.save();

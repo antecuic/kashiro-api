@@ -9,17 +9,17 @@ import Item from '../models/Item';
 import User from '../models/User';
 
 const addItem = async (req, res, next) => {
-  const { amount, description, type } = req.body;
+  const { amount, description, type, userID } = req.body;
 
   const newItem = new Item({
     amount,
     type,
     description,
     timestamp: new Date(),
-    user: req.user._id,
+    user: userID,
   });
 
-  const currentBalance: number = await getUserBalanceStatus(req.user._id);
+  const currentBalance: number = await getUserBalanceStatus(userID);
 
   let newBalanceStatus: number;
 
@@ -28,14 +28,14 @@ const addItem = async (req, res, next) => {
   } else {
     newBalanceStatus = currentBalance - amount;
   }
+  console.log(`users new balance ${newBalanceStatus}`);
 
   await newItem.save((err) => {
     if (err) {
       return next(createError(500, err.message));
     }
   });
-  console.log(req.user._id);
-  await updateUsersBalance(newBalanceStatus, req.user._id);
+  await updateUsersBalance(newBalanceStatus, userID);
   res.sendStatus(200);
 };
 
@@ -54,7 +54,7 @@ const removeItem = async (req, res, next) => {
     }
   );
 
-  const currentBalance: number = await getUserBalanceStatus(req.user._id);
+  const currentBalance: number = await getUserBalanceStatus(req.body.userID);
   let newBalanceStatus: number;
 
   if (item.type === 'income') {
@@ -67,15 +67,15 @@ const removeItem = async (req, res, next) => {
     if (err) return next(createError(500, err.message));
   });
 
-  await updateUsersBalance(newBalanceStatus, req.user._id);
+  await updateUsersBalance(newBalanceStatus, req.body.userID);
   res.sendStatus(200);
 };
 
 const updateItem = async (req, res, next) => {
-  const { _id, amount, description, type } = req.body;
+  const { _id, amount, description, type, userID } = req.body;
 
   const currentItem: IItem.ItemInformation = await getItemById(_id);
-  let currentBalanceStatus: number = await getUserBalanceStatus(req.user._id);
+  let currentBalanceStatus: number = await getUserBalanceStatus(userID);
 
   if (currentItem.type === 'income') {
     currentBalanceStatus -= currentItem.amount;
@@ -103,7 +103,7 @@ const updateItem = async (req, res, next) => {
   );
 
   await User.findByIdAndUpdate(
-    req.user._id,
+    userID,
     { balance: currentBalanceStatus },
     {},
     (err) => {
